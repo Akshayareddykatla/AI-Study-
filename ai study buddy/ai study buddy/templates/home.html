@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title %}Welcome - AI Smart Buddy{% endblock %}
+{% block content %}
+<!-- Lottie Player Script -->
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+<!-- Hero Section -->
+<section class="py-5 overflow-hidden hero-section">
+    <div class="container py-lg-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0 animate-fade-in-left">
+                <span
+                    class="badge bg-primary-subtle text-primary rounded-pill px-4 py-2 mb-3 shadow-sm border border-primary-subtle">
+                    <i class="fas fa-sparkles me-2"></i>AI-Powered Learning 🚀
+                </span>
+                <h1 class="display-2 fw-bold mb-4 main-title">
+                    Your Intelligent <br><span class="gradient-text">Study Buddy</span>
+                </h1>
+                <p class="lead text-muted mb-5 fs-4 opacity-90">
+                    Master any subject with a personal AI companion that adapts to your learning pace and style.
+                    Experience the future of education today.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'accounts:register' %}"
+                        class="btn btn-primary btn-lg rounded-pill px-5 shadow-lg btn-glow">
+                        Get Started Free <i class="fas fa-arrow-right ms-2 small"></i>
+                    </a>
+                    <a href="#features" class="btn btn-outline-secondary btn-lg rounded-pill px-5 hover-lift">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 animate-float">
+                <div class="hero-visual-container position-relative">
+                    <div class="glow-sphere"></div>
+                    <!-- Premium AI Lottie Animation -->
+                    <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_ghp9o61r.json"
+                        background="transparent" speed="1" style="width: 100%; height: 500px;" loop autoplay>
+                    </lottie-player>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 mb-5" id="features">
+    <div class="container">
+        <div class="row g-4 d-flex justify-content-center">
+            <div class="col-md-4 animate-up" style="animation-delay: 200ms;">
+                <div class="card p-4 h-100 border-0 feature-card glass-card">
+                    <div class="icon-box bg-primary-subtle text-primary mb-4">
+                        <i class="fas fa-robot fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Smart AI Chat</h4>
+                    <p class="text-muted">Ask questions 24/7 and get human-like explanations tailored to your level.</p>
+                </div>
+            </div>
+            <div class="col-md-4 animate-up" style="animation-delay: 400ms;">
+                <div class="card p-4 h-100 border-0 feature-card glass-card">
+                    <div class="icon-box bg-success-subtle text-success mb-4">
+                        <i class="fas fa-check-double fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Interactive Quizzes</h4>
+                    <p class="text-muted">Test your knowledge with auto-generated quizzes and instant feedback.</p>
+                </div>
+            </div>
+            <div class="col-md-4 animate-up" style="animation-delay: 600ms;">
+                <div class="card p-4 h-100 border-0 feature-card glass-card">
+                    <div class="icon-box bg-warning-subtle text-warning mb-4">
+                        <i class="fas fa-chart-line fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Progress Tracking</h4>
+                    <p class="text-muted">Visualize your learning journey with detailed analytics and insights.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    :root {
+        --primary-glow: rgba(67, 97, 238, 0.4);
+        --secondary-glow: rgba(112, 72, 232, 0.4);
+    }
+
+    .main-title {
+        line-height: 1.1;
+        letter-spacing: -1px;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-section {
+        background: radial-gradient(circle at 0% 0%, rgba(67, 97, 238, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(114, 9, 183, 0.05) 0%, transparent 50%);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 24px !important;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+    }
+
+    .btn-glow:hover {
+        box-shadow: 0 0 20px var(--primary-glow) !important;
+        transform: scale(1.02);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Animations */
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    .animate-fade-in-left {
+        animation: fadeInLeft 1s ease-out both;
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.8s ease-out both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .glow-sphere {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+        filter: blur(40px);
+        z-index: -1;
+    }
+
+    [data-theme="dark"] .glass-card {
+        background: rgba(30, 41, 59, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+</style>
+{% endblock %}

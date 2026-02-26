@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}AI Buddy - Smart Study Assistant{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="glass-card chat-container d-flex flex-column animate-up shadow-lg">
+                <!-- Chat Header -->
+                <div class="chat-header p-4 d-flex align-items-center border-bottom border-light-subtle">
+                    <div class="buddy-avatar me-3">
+                        <img src="https://ui-avatars.com/api/?name=AI&background=4361ee&color=fff"
+                            class="rounded-circle shadow-sm" width="50" alt="Bot">
+                        <span class="status-indicator"></span>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">Smart Study Buddy</h5>
+                        <div class="d-flex align-items-center text-success small fw-bold">
+                            <span class="pulse-dot me-2"></span>Online & Ready
+                        </div>
+                    </div>
+                    <div class="ms-auto">
+                        <button class="btn btn-light btn-sm rounded-circle me-2 shadow-none" title="Clear Chat">
+                            <i class="fas fa-trash-alt text-muted"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="chat-area p-4 flex-grow-1" id="chat-area">
+                    <!-- Buddy Message -->
+                    <div class="chat-message buddy mb-4">
+                        <div class="message-content glass-card px-4 py-3 shadow-sm border-0">
+                            <p class="mb-0">Hello **{{ user.username }}**! I'm your AI Smart Buddy. I can explain
+                                complex topics, help with homework, or quiz you on your notes. What are we studying
+                                today? 📚</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-wrapper p-4 border-top border-light-subtle bg-white bg-opacity-10">
+                    <form id="chat-form" class="position-relative">
+                        <textarea id="user-input" class="form-control glass-input px-4 py-3 shadow-none border-0 pe-5"
+                            placeholder="Ask me anything..." rows="1" style="resize: none;"></textarea>
+                        <button class="send-btn position-absolute top-50 end-0 translate-middle-y me-3" type="submit">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <div class="text-center mt-2">
+                        <small class="text-muted x-small">Powered by Gemini AI • Always verify facts</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-container {
+        height: 80vh;
+        overflow: hidden;
+        border-radius: 30px !important;
+    }
+
+    .chat-area {
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        background: radial-gradient(circle at 50% 50%, rgba(67, 97, 238, 0.02) 0%, transparent 100%);
+    }
+
+    /* Custom Scrollbar */
+    .chat-area::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-area::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+
+    .chat-message {
+        display: flex;
+        max-width: 85%;
+    }
+
+    .chat-message.user {
+        margin-left: auto;
+        justify-content: flex-end;
+    }
+
+    .chat-message.buddy {
+        margin-right: auto;
+    }
+
+    .message-content {
+        border-radius: 20px;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .user .message-content {
+        background: var(--primary-gradient) !important;
+        color: white;
+        border-bottom-right-radius: 4px;
+        box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2) !important;
+    }
+
+    .buddy .message-content {
+        background: var(--glass-bg) !important;
+        color: var(--bs-body-color);
+        border-bottom-left-radius: 4px;
+    }
+
+    .glass-input {
+        background: rgba(0, 0, 0, 0.03) !important;
+        border-radius: 18px !important;
+        transition: var(--transition-smooth);
+    }
+
+    [data-theme="dark"] .glass-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    .send-btn {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        transition: var(--transition-smooth);
+    }
+
+    .send-btn:hover {
+        transform: scale(1.1) rotate(10deg);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+
+    .status-indicator {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 14px;
+        height: 14px;
+        background: #22c55e;
+        border: 3px solid white;
+        border-radius: 50%;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
+        animation: pulse-sm 2s infinite;
+    }
+
+    @keyframes pulse-sm {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+        }
+    }
+
+    /* Typing Dots */
+    .typing-dots span {
+        height: 6px;
+        width: 6px;
+        background: #94a3b8;
+        border-radius: 50%;
+        display: inline-block;
+        animation: typing 1s infinite alternate;
+        margin: 0 2px;
+    }
+
+    .typing-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+        from {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+
+        to {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+    }
+
+    .x-small {
+        font-size: 0.7rem;
+    }
+</style>
+
+<script>
+    const chatArea = document.getElementById('chat-area');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+
+    // Auto-resize textarea
+    userInput.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+        if (this.scrollHeight > 150) {
+            this.style.overflowY = 'scroll';
+            this.style.height = '150px';
+        } else {
+            this.style.overflowY = 'hidden';
+        }
+    });
+
+    function appendMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender} mb-4 animate-up`;
+        messageDiv.innerHTML = `
+            <div class="message-content ${sender === 'buddy' ? 'glass-card' : ''} px-4 py-3 shadow-sm border-0">
+                <p class="mb-0">${text.replace(/\n/g, '<br>')}</p>
+            </div>`;
+        chatArea.appendChild(messageDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'chat-message buddy mb-4';
+        typingDiv.innerHTML = `
+            <div class="message-content glass-card px-4 py-2 border-0">
+                <div class="typing-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>`;
+        chatArea.appendChild(typingDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function hideTyping() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) indicator.remove();
+    }
+
+    chatForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user');
+        userInput.value = '';
+        userInput.style.height = 'auto';
+        showTyping();
+
+        fetch('{% url "chat_api" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ message: text })
+        })
+            .then(response => response.json())
+            .then(data => {
+                hideTyping();
+                if (data.status === 'success') {
+                    appendMessage(data.buddy_response, 'buddy');
+                } else {
+                    appendMessage("I encountered an error. Please try again.", 'buddy');
+                }
+            })
+            .catch(error => {
+                hideTyping();
+                appendMessage("Connection lost. Check your internet.", 'buddy');
+            });
+    });
+</script>
+{% endblock %}

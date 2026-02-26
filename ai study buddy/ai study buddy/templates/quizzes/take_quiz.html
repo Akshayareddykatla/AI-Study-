@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }} - AI Smart Buddy{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Section -->
+            <div class="mb-5 animate-fade-in">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-light rounded-circle shadow-sm">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <span
+                        class="badge rounded-pill bg-{{ quiz.difficulty }}-subtle text-{{ quiz.difficulty }} px-3 py-2">
+                        {{ quiz.get_difficulty_display }}
+                    </span>
+                    <span class="text-muted small">
+                        <i class="fas fa-tag me-1"></i> {{ quiz.get_category_display }}
+                    </span>
+                </div>
+                <h1 class="fw-bold display-6 mb-2">{{ quiz.title }}</h1>
+                <p class="text-muted fs-5">{{ quiz.description }}</p>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="sticky-top bg-white py-3 mb-4 shadow-sm rounded-4 px-4 border"
+                style="top: 80px; z-index: 1000;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold small text-primary">YOUR PROGRESS</span>
+                    <span class="small text-muted fw-bold" id="progress-text">0 / {{ quiz.questions.count }}
+                        answered</span>
+                </div>
+                <div class="progress rounded-pill" style="height: 10px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                        id="quiz-progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <form method="post" id="quiz-form">
+                {% csrf_token %}
+                {% for question in quiz.questions.all %}
+                <div class="card border-0 shadow-sm mb-4 question-card animate-slide-up"
+                    style="animation-delay: calc({{ forloop.counter0 }} * 100ms);">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="question-number bg-primary text-white rounded-circle me-3 flex-shrink-0">
+                                {{ forloop.counter }}
+                            </div>
+                            <h4 class="mb-0 fw-bold leading-tight">{{ question.text }}</h4>
+                        </div>
+
+                        <div class="options-grid">
+                            {% for choice in question.choices.all %}
+                            <div class="option-item custom-radio mb-3">
+                                <input class="form-check-input q-input" type="radio" name="question_{{ question.id }}"
+                                    id="choice_{{ choice.id }}" value="{{ choice.id }}" required
+                                    onchange="updateProgress()">
+                                <label class="option-label w-100 p-4 rounded-4 border d-flex align-items-center"
+                                    for="choice_{{ choice.id }}">
+                                    <div class="radio-circle me-3"></div>
+                                    <span class="fs-5">{{ choice.text }}</span>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="d-grid gap-2 mt-5 mb-5">
+                    <button type="submit" class="btn btn-dark btn-lg rounded-pill shadow-lg py-3 fw-bold animate-pulse">
+                        Complete Challenge <i class="fas fa-check-circle ms-2"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --beginner-subtle: #d1fae5;
+        --beginner: #059669;
+        --intermediate-subtle: #dbeafe;
+        --intermediate: #2563eb;
+        --advanced-subtle: #fee2e2;
+        --advanced: #dc2626;
+    }
+
+    .bg-beginner-subtle {
+        background: var(--beginner-subtle);
+    }
+
+    .text-beginner {
+        color: var(--beginner);
+    }
+
+    .bg-intermediate-subtle {
+        background: var(--intermediate-subtle);
+    }
+
+    .text-intermediate {
+        color: var(--intermediate);
+    }
+
+    .bg-advanced-subtle {
+        background: var(--advanced-subtle);
+    }
+
+    .text-advanced {
+        color: var(--advanced);
+    }
+
+    .question-card {
+        border-radius: 32px !important;
+        background: #fff;
+        transition: transform 0.3s;
+    }
+
+    .question-number {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .option-label {
+        background: #f9fafb;
+        border: 2px solid transparent !important;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .radio-circle {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #d1d5db;
+        border-radius: 50%;
+        background: #fff;
+        position: relative;
+    }
+
+    .q-input:checked+.option-label {
+        background: #eff6ff;
+        border-color: #3b82f6 !important;
+        transform: scale(1.02);
+    }
+
+    .q-input:checked+.option-label .radio-circle {
+        border-color: #3b82f6;
+        background: #3b82f6;
+    }
+
+    .q-input:checked+.option-label .radio-circle::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        border-radius: 50%;
+    }
+
+    .option-label:hover {
+        background: #f3f4f6;
+        border-color: #e5e7eb !important;
+    }
+
+    .q-input {
+        display: none;
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 1s ease both;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 0.8s ease both;
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+        }
+
+        70% {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        }
+    }
+</style>
+
+<script>
+    function updateProgress() {
+        const totalQuestions = {{ quiz.questions.count }
+    };
+    const answeredQuestions = document.querySelectorAll('.q-input:checked').length;
+    const progressPercent = (answeredQuestions / totalQuestions) * 100;
+
+    const progressBar = document.getElementById('quiz-progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    progressBar.style.width = progressPercent + '%';
+    progressText.innerText = `${answeredQuestions} / ${totalQuestions} answered`;
+    }
+</script>
+{% endblock %}

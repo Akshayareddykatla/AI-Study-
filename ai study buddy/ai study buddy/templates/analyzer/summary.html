@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Summary: {{ file_obj.name }} - AI Smart Buddy{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Summary Section -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-3">
+                        <li class="breadcrumb-item"><a href="{% url 'analyzer:file_upload' %}">Analyzer</a></li>
+                        <li class="breadcrumb-item active">{{ file_obj.name }}</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-bold mb-3">{{ file_obj.name }}</h2>
+                <div class="badge bg-primary-subtle text-primary mb-4 p-2 px-3">
+                    <i class="fas fa-file-alt me-2"></i>Summary
+                </div>
+                <div class="fs-5 text-dark lh-base lead mb-0">
+                    {{ file_obj.summary }}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4">
+                <h4 class="fw-bold mb-4">Generated Quiz Questions</h4>
+                {% for question in file_obj.questions.all %}
+                <div class="mb-5">
+                    <div class="d-flex align-items-start mb-3">
+                        <span class="badge bg-dark rounded-pill me-3">Q{{ forloop.counter }}</span>
+                        <h5 class="fw-bold mb-0">{{ question.text }}</h5>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 border bg-light small mb-2">
+                                <span class="text-success fw-bold me-2">Correct:</span> {{ question.correct_answer }}
+                            </div>
+                        </div>
+                        {% for dist in question.distractors %}
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 border small mb-2 opacity-50">
+                                {{ dist }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No questions could be generated from this content.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 mb-4 bg-primary text-white">
+                    <h5 class="fw-bold mb-3">File Info</h5>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><i class="fas fa-calendar me-2 opacity-75"></i>Uploaded: {{
+                            file_obj.uploaded_at|date:"M d, Y" }}</li>
+                        <li><i class="fas fa-hdd me-2 opacity-75"></i>Size: {{ file_obj.file.size|filesizeformat }}</li>
+                    </ul>
+                    <hr class="opacity-25">
+                    <a href="{{ file_obj.file.url }}" class="btn btn-light w-100 rounded-pill btn-sm fw-bold">Download
+                        Original</a>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4 bg-light">
+                    <h5 class="fw-bold mb-3">Next Steps</h5>
+                    <div class="list-group list-group-flush bg-transparent">
+                        <a href="{% url 'chat' %}"
+                            class="list-group-item list-group-item-action bg-transparent px-0 border-0">
+                            <i class="fas fa-comments text-primary me-2"></i>Discuss with AI Buddy
+                        </a>
+                        <a href="{% url 'quizzes:quiz_list' %}"
+                            class="list-group-item list-group-item-action bg-transparent px-0 border-0">
+                            <i class="fas fa-tasks text-primary me-2"></i>Take a General Quiz
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AI Smart Buddy{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Header -->
+    <div class="row mb-5 align-items-end animate-up">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold mb-1">Hello, {{ user.username }}! 👋</h1>
+            <p class="text-muted fs-5 mb-0">Your intelligent evolution is in full swing.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="glass-card d-inline-flex align-items-center px-4 py-2 border-primary-subtle">
+                <i class="fas fa-bolt text-warning me-2"></i>
+                <span class="fw-bold text-primary">{{ user.profile.learning_level|title }} Mastery</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6 animate-up" style="animation-delay: 100ms;">
+            <div class="glass-card card h-100 border-0 p-4 text-center">
+                <div class="icon-circle bg-primary-subtle text-primary mx-auto mb-3">
+                    <i class="fas fa-feather-pointed fs-4"></i>
+                </div>
+                <h2 class="fw-bold mb-0 count-up">{{ progress.total_quizzes_taken }}</h2>
+                <p class="text-muted small text-uppercase letter-spacing-wide mb-0">Quizzes Done</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 animate-up" style="animation-delay: 200ms;">
+            <div class="glass-card card h-100 border-0 p-4 text-center">
+                <div class="icon-circle bg-danger-subtle text-danger mx-auto mb-3">
+                    <i class="fas fa-fire-flame-curved fs-4"></i>
+                </div>
+                <h2 class="fw-bold mb-0 count-up">{{ progress.current_streak }}</h2>
+                <p class="text-muted small text-uppercase letter-spacing-wide mb-0">Day Streak</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 animate-up" style="animation-delay: 300ms;">
+            <div class="glass-card card h-100 border-0 p-4 text-center">
+                <div class="icon-circle bg-success-subtle text-success mx-auto mb-3">
+                    <i class="fas fa-award fs-4"></i>
+                </div>
+                <h2 class="fw-bold mb-0 count-up">{{ progress.average_score_percentage }}%</h2>
+                <p class="text-muted small text-uppercase letter-spacing-wide mb-0">Avg. Accuracy</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 animate-up" style="animation-delay: 400ms;">
+            <div class="glass-card card h-100 border-0 p-4 text-center bg-primary text-white premium-gradient-bg">
+                <div class="icon-circle bg-white text-primary mx-auto mb-3">
+                    <i class="fas fa-star fs-4"></i>
+                </div>
+                <h2 class="fw-bold mb-0">{{ progress.highest_score }}</h2>
+                <p class="text-white-50 small text-uppercase letter-spacing-wide mb-0">PB Score</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Content Area -->
+        <div class="col-lg-8">
+            <!-- Mastery Progress -->
+            <div class="glass-card p-4 mb-4 animate-up" style="animation-delay: 500ms;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-stairs text-primary me-2"></i>Curriculum Progress</h5>
+                    <span class="gradient-text fw-bold">{{ progress.average_score_percentage }}% Mastery achieved</span>
+                </div>
+                <div class="progress mb-2" style="height: 14px; border-radius: 100px; background: rgba(0,0,0,0.05);">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated premium-progress"
+                        role="progressbar" style="width: {{ progress.average_score_percentage }}%"></div>
+                </div>
+            </div>
+
+            <!-- AI Challenge Hero -->
+            <div class="glass-card p-5 mb-4 position-relative overflow-hidden animate-up"
+                style="animation-delay: 600ms; background: linear-gradient(135deg, rgba(67, 97, 238, 0.08) 0%, rgba(114, 9, 183, 0.08) 100%); border-color: rgba(67, 97, 238, 0.2)">
+                <div class="position-relative z-1 d-flex justify-content-between align-items-center">
+                    <div class="col-md-9">
+                        <span class="badge bg-danger rounded-pill px-3 py-2 mb-3 shadow-glow">NEW CHALLENGE
+                            AVAILABLE</span>
+                        <h2 class="fw-bold mb-3">Master the Generative AI Stack</h2>
+                        <p class="text-muted mb-4 fs-5">Deep dive into RAG, Agentic Workflows, and Advanced Fine-tuning.
+                            Accelerate your career today.</p>
+                        <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-premium px-5">Start Learning</a>
+                    </div>
+                    <div class="col-md-3 text-end d-none d-md-block">
+                        <i class="fas fa-brain display-1 text-primary-subtle opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <div class="glass-card border-0 animate-up" style="animation-delay: 700ms;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-history text-muted me-2"></i>Recent Evaluations</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <tbody>
+                                {% for res in recent_results %}
+                                <tr>
+                                    <td class="ps-0" style="width: 50px">
+                                        <div
+                                            class="activity-circle {% if res.percentage >= 80 %}bg-success-subtle text-success{% else %}bg-primary-subtle text-primary{% endif %}">
+                                            <i
+                                                class="fas {% if res.percentage >= 80 %}fa-check{% else %}fa-bolt{% endif %}"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h6 class="fw-bold mb-0">{{ res.quiz.title }}</h6>
+                                        <small class="text-muted">{{ res.timestamp|timesince }} ago</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="small fw-bold">{{ res.score }} / {{ res.total_points }}</div>
+                                        <div class="progress" style="height: 4px; width: 60px; margin: 4px auto;">
+                                            <div class="progress-bar bg-primary" style="width: {{ res.percentage }}%">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-0">
+                                        {% if res.percentage >= 80 %}
+                                        <span class="badge bg-success-subtle text-success rounded-pill px-3">Mastery
+                                            🌟</span>
+                                        {% else %}
+                                        <span
+                                            class="badge bg-primary-subtle text-primary rounded-pill px-3">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">No activity yet. Let's start
+                                        learning!</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Sidebar -->
+        <div class="col-lg-4">
+            <!-- Learning Buddy Widget -->
+            <div class="glass-card p-4 mb-4 animate-up" style="animation-delay: 800ms;">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="avatar-glow me-3">
+                        <img src="https://ui-avatars.com/api/?name=AI&background=4361ee&color=fff"
+                            class="rounded-circle" width="50">
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Buddy Assistant</h6>
+                        <small class="text-success fw-bold">Ready to help 24/7</small>
+                    </div>
+                </div>
+                <p class="small text-muted mb-4">Already asked **{{ progress.total_questions_asked }}** questions this
+                    week. Keep curious!</p>
+                <a href="{% url 'chat' %}" class="btn btn-premium w-100 btn-sm">Talk to AI Buddy</a>
+            </div>
+
+            <!-- Subject Deep Dive -->
+            <div class="row g-3 mb-4 animate-up" style="animation-delay: 900ms;">
+                <div class="col-6">
+                    <div class="glass-card p-3 text-center border-success-subtle h-100">
+                        <small class="text-uppercase fw-bold text-muted x-small d-block mb-1">Strongest</small>
+                        <h6 class="fw-bold mb-0 text-success">{{ progress.strongest_subject|default:"Topic A" }}</h6>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="glass-card p-3 text-center border-danger-subtle h-100">
+                        <small class="text-uppercase fw-bold text-muted x-small d-block mb-1">Needs Focus</small>
+                        <h6 class="fw-bold mb-0 text-danger">{{ progress.weakest_subject|default:"Topic B" }}</h6>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Buddy Quick Link -->
+            <div class="glass-card p-4 mb-4 text-center animate-up" style="animation-delay: 1000ms;">
+                <div class="icon-circle bg-danger-subtle text-danger mx-auto mb-3">
+                    <i class="fab fa-youtube fs-4"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Smart Video Search</h6>
+                <p class="text-muted small mb-3">Gemini curated learning paths for YouTube.</p>
+                <a href="{% url 'video_buddy:video_chat' %}"
+                    class="btn btn-outline-danger w-100 btn-sm rounded-pill">Open Video Buddy</a>
+            </div>
+
+            <!-- Badges Section -->
+            <div class="glass-card p-4 animate-up" style="animation-delay: 1100ms;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="fw-bold mb-0">Achieved Honor Badges</h6>
+                    <a href="{% url 'progress:leaderboard' %}" class="text-decoration-none x-small fw-bold">Leaderboard
+                        <i class="fas fa-chevron-right ms-1"></i></a>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for badge in progress.badges %}
+                    <div class="badge-pill bg-white shadow-sm" title="{{ badge }}">
+                        <i class="fas fa-award text-warning"></i>
+                        <span>{{ badge }}</span>
+                    </div>
+                    {% empty %}
+                    <div class="w-100 text-center py-3 opacity-50">
+                        <i class="fas fa-lock mb-2 d-block"></i>
+                        <small>Complete quizzes to unlock!</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        margin-bottom: 1rem;
+    }
+
+    .premium-gradient-bg {
+        background: var(--primary-gradient) !important;
+    }
+
+    .letter-spacing-wide {
+        letter-spacing: 1px;
+    }
+
+    .premium-progress {
+        background: var(--primary-gradient) !important;
+        box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+    }
+
+    .activity-circle {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+    }
+
+    .badge-pill {
+        padding: 8px 16px;
+        border-radius: 14px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .avatar-glow {
+        position: relative;
+    }
+
+    .avatar-glow::after {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        z-index: -1;
+        filter: blur(8px);
+        opacity: 0.3;
+    }
+
+    .shadow-glow {
+        box-shadow: 0 0 20px rgba(220, 53, 69, 0.5) !important;
+    }
+
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    [data-theme="dark"] .table {
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .badge-pill {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #cbd5e1;
+    }
+</style>
+{% endblock %}

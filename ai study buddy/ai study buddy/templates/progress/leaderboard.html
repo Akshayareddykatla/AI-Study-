@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard - AI Smart Buddy{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="glass-card overflow-hidden animate-up border-0">
+                <div class="bg-primary bg-opacity-10 p-5 text-center border-bottom border-light-subtle">
+                    <div class="display-3 mb-2">🏆</div>
+                    <h1 class="fw-bold mb-1 gradient-text">Global Leaderboard</h1>
+                    <p class="text-muted mb-0">The elite learners of the AI Smart Buddy community.</p>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead class="bg-light bg-opacity-50 border-bottom border-light-subtle">
+                                <tr>
+                                    <th class="ps-4 py-3 text-muted small fw-bold text-uppercase">Rank</th>
+                                    <th class="py-3 text-muted small fw-bold text-uppercase">Learner</th>
+                                    <th class="py-3 text-muted small fw-bold text-uppercase">Points</th>
+                                    <th class="py-3 text-muted small fw-bold text-uppercase text-center">Efficiency</th>
+                                    <th class="pe-4 py-3 text-muted small fw-bold text-uppercase text-end">Streak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rank in rankings %}
+                                <tr
+                                    class="leaderboard-row {% if rank.user == request.user %}current-user-row{% endif %}">
+                                    <td class="ps-4 py-4">
+                                        <div class="rank-badge rank-{{ forloop.counter }}">
+                                            {% if forloop.counter <= 3 %} <i class="fas fa-crown"></i>
+                                                {% else %}
+                                                {{ forloop.counter }}
+                                                {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-primary text-white me-3 animate-float"
+                                                style="animation-delay: {{ forloop.counter }}00ms">
+                                                {{ rank.user.username|first|upper }}
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">{{ rank.user.username }}</h6>
+                                                <span class="badge bg-light text-muted fw-normal rounded-pill x-small">
+                                                    {{ rank.user.profile.learning_level|title }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="fw-bold text-dark">{{ rank.total_score_sum }}</span>
+                                    </td>
+                                    <td class="py-4 text-center">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <span class="text-primary small fw-bold mb-1">{{
+                                                rank.average_score_percentage }}%</span>
+                                            <div class="progress w-100" style="height: 4px; max-width: 60px;">
+                                                <div class="progress-bar bg-primary"
+                                                    style="width: {{ rank.average_score_percentage }}%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="pe-4 py-4 text-end">
+                                        {% if rank.current_streak > 0 %}
+                                        <span
+                                            class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 fw-bold">
+                                            <i class="fas fa-fire me-1"></i>{{ rank.current_streak }}
+                                        </span>
+                                        {% else %}
+                                        <span class="text-muted opacity-50 small">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="fas fa-ghost display-4 opacity-10 mb-3 d-block"></i>
+                                        No rankings found. Be the first to join!
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center mt-4 text-muted x-small text-uppercase letter-spacing-wide">
+                <i class="fas fa-sync-alt me-1"></i> Real-time updates based on cumulative performance
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    .leaderboard-row {
+        transition: var(--transition-smooth);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .leaderboard-row:hover {
+        background: rgba(67, 97, 238, 0.02) !important;
+        transform: translateX(5px);
+    }
+
+    .current-user-row {
+        background: rgba(67, 97, 238, 0.05) !important;
+        position: relative;
+    }
+
+    .current-user-row::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--primary-gradient);
+    }
+
+    .rank-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .rank-1 {
+        background: #fef3c7;
+        color: #d97706;
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+    }
+
+    .rank-2 {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .rank-3 {
+        background: #ffedd5;
+        color: #ea580c;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: var(--card-shadow);
+        background: var(--primary-gradient);
+    }
+
+    .letter-spacing-wide {
+        letter-spacing: 0.1rem;
+    }
+</style>
+{% endblock %}
